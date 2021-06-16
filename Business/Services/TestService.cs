@@ -37,9 +37,9 @@ namespace Business.Services
             return _mapper.Map<IEnumerable<TestModel>>(Database.TestRepository.GetAll());
         }
 
-        public IEnumerable<TestModel> GetAllWithDetails()
+        public async Task<TestModel> GetByIdWithDetailsAsync(int id)
         {
-            return _mapper.Map<IEnumerable<TestModel>>(Database.TestRepository.GetAllWithDetails());
+            return _mapper.Map<TestModel>(await Database.TestRepository.GetByIdWithDetailsAsync(id));
         }
 
         public async Task<TestModel> GetByIdAsync(int id)

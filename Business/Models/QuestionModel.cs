@@ -8,9 +8,8 @@ namespace Business.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int TestId { get; set; }
         public string UserAnswer { get; set; }
+        public int TestId { get; set; }
         public List<AnswerModel> Answers { get; set; }
-        //public List<int> AnswerIds { get; set; }
     }
 }

@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Business.Interfaces
 {
     public interface ITestService: ICrud<TestModel>
     {
-        IEnumerable<TestModel> GetAllWithDetails();
+        Task<TestModel> GetByIdWithDetailsAsync(int id);
     }
 }

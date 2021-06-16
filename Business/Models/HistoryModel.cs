@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Data.Entities
+namespace Business.Models
 {
-    public class History : BaseEntity
+    public class HistoryModel
     {
+        public int Id { get; set; }
         public DateTime DateTime { get; set; }
         public int NumberOfQuestions { get; set; }
         public int Result { get; set; }
-        public User User { get; set; }
+        public UserModel User { get; set; }
         public int UserId { get; set; }
-        public Test Test { get; set; }
+        public TestModel Test { get; set; }
         public int TestId { get; set; }
     }
 }

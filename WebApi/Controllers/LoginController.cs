@@ -10,10 +10,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Business.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using WebApi.Models;
 
 namespace WebApi.Controllers
 {
@@ -23,48 +23,22 @@ namespace WebApi.Controllers
     {
         private IConfiguration _config;
         private IUserService _userService;
-        private ITestService _testService;
 
-        public LoginController(IUserService userService, ITestService testService, IConfiguration config)
+        public LoginController(IUserService userService,  IConfiguration config)
         {
             _userService = userService;
-            _testService = testService;
             _config = config;
         }
-        [HttpPost("registration")]
-        public async Task<IActionResult> Registration([FromBody]RegistrationViewModel model)
-        {
-
-            UserModel user = new UserModel()
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Username = model.Email,
-                Password = model.Password,
-                Role = "user"
-            };
-            try
-            {
-                await _userService.AddAsync(user);
-                return Ok(user);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]LoginViewModel model)
+        public async Task<IActionResult> Login([FromBody] LoginViewModel model)
         {
             UserModel user = await _userService.GetByUsernameAndPasswordAsync(model.Email, model.Password);
-
 
             if (user != null)
             {
                 var tokenStr = GenerateJSONWebToken(user);
-                return Ok(new { token = tokenStr });
+                return Ok(new { token = tokenStr, role = user.Role });
             }
             return Unauthorized();
         }
@@ -75,7 +49,7 @@ namespace WebApi.Controllers
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, model.Username),
+                new Claim(JwtRegisteredClaimNames.Sub, model.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -90,11 +64,25 @@ namespace WebApi.Controllers
             return encodeToken;
         }
 
-        //[Authorize]
-        [HttpGet("tests")]
-        public IEnumerable<TestModel> GetTests()
+        [HttpPost("registration")]
+        public async Task<IActionResult> Registration([FromBody] RegistrationViewModel model)
         {
-            return _testService.GetAllWithDetails();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            UserModel user = new UserModel()
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Username = model.Email,
+                Password = model.Password,
+                Role = "user"
+            };
+            
+            await _userService.AddAsync(user);
+            return Ok(model);
+            
         }
+
     }
 }

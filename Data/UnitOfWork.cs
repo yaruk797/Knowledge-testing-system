@@ -15,7 +15,6 @@ namespace Data
         private HistoryRepository historyRepository;
         private TestRepository testRepository;
         private QuestionRepository questionRepository;
-        private AnswerRepository answerRepository;
 
         public UnitOfWork(TestDbContext context)
         {
@@ -59,16 +58,6 @@ namespace Data
                 if (questionRepository == null)
                     questionRepository = new QuestionRepository(db);
                 return questionRepository;
-            }
-        }
-
-        public IAnswerRepository AnswerRepository
-        {
-            get
-            {
-                if (answerRepository == null)
-                    answerRepository = new AnswerRepository(db);
-                return answerRepository;
             }
         }
 

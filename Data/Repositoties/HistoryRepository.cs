@@ -43,6 +43,16 @@ namespace Data.Repositoties
             return await db.Histories.FirstOrDefaultAsync(h => h.Id == id);
         }
 
+        public async Task<IEnumerable<History>> GetByUserIdWithDetailsAsync(int userId)
+        {
+            return await db.Histories.Where(h => h.UserId == userId).Include(h => h.Test).ToListAsync();
+        }
+
+        public async Task<IEnumerable<History>> GetAllWithDetailsAsync()
+        {
+            return await db.Histories.Include(h => h.User).Include(h => h.Test).ToListAsync();
+        }
+
         public void Update(History entity)
         {
             db.Histories.Update(entity);

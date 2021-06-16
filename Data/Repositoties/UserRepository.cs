@@ -46,7 +46,6 @@ namespace Data.Repositoties
 
         public async Task<User> GetByUsernameAndPasswordAsync(string username, string password)
         {
-            //db.Users.Include(u => u.Profile);
             return await db.Users.Include(u => u.Profile).FirstOrDefaultAsync(u => u.Profile.Username == username && 
                     u.Profile.Password == password);
         }

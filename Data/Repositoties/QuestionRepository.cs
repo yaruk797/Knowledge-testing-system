@@ -3,6 +3,7 @@ using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,6 +42,11 @@ namespace Data.Repositoties
         public async Task<Question> GetByIdAsync(int id)
         {
             return await db.Questions.FirstOrDefaultAsync(q => q.Id == id);
+        }
+
+        public async Task<IEnumerable<Question>> GetByTestIdWithDetailsAsync(int testId)
+        {
+            return await db.Questions.Where(q => q.TestId == testId).ToListAsync();
         }
 
         public void Update(Question entity)

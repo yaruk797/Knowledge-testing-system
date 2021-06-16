@@ -11,7 +11,6 @@ namespace Data.Interfaces
         IHistoryRepository HistoryRepository { get; }
         ITestRepository TestRepository { get; }
         IQuestionRepository QuestionRepository { get; }
-        IAnswerRepository AnswerRepository { get; }
         Task SaveAsync();
     }
 }

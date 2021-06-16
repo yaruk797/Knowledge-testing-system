@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Business.Interfaces;
 using Business.Models;
+using Business.Models.ViewModels;
 using Business.Validation;
 using Data.Entities;
 using Data.Interfaces;

@@ -35,12 +35,12 @@ namespace Data.Repositoties
 
         public IEnumerable<Test> GetAll()
         {
-            return db.Tests;
+            return db.Tests.ToList();
         }
 
-        public IEnumerable<Test> GetAllWithDetails()
+        public async Task<Test> GetByIdWithDetailsAsync(int id)
         {
-            return db.Tests.Include(t => t.Questions).ToList();
+            return await db.Tests.Where(t=>t.Id==id).Include(t=>t.Questions).ThenInclude(t=>t.Answers).FirstOrDefaultAsync();
         }
 
         public async Task<Test> GetByIdAsync(int id)

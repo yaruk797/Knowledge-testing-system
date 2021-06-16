@@ -10,8 +10,6 @@ namespace Data.Entities
         public string Name { get; set; }
         public Test Test { get; set; }
         public int TestId { get; set; }
-        [NotMapped]
-        public string UserAnswer { get; set; }
         public List<Answer> Answers { get; set; }
     }
 }

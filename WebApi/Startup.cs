@@ -14,6 +14,7 @@ using System;
 using Data.Interfaces;
 using Business.Interfaces;
 using Business.Services;
+using AutoMapper;
 
 namespace WebApi
 {
@@ -29,11 +30,8 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCors(opt =>
-            //{
-            //    opt.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            //});
-            //services.AddCors();
+            services.AddDbContext<TestDbContext>(options => options.UseSqlServer(Configuration["ConnectionString"]));
+            services.AddAutoMapper(typeof(Business.AutomapperProfile));
             services.AddCors(options =>
             {
                 options.AddPolicy(
@@ -47,6 +45,7 @@ namespace WebApi
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    options.RequireHttpsMetadata = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -58,14 +57,20 @@ namespace WebApi
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new Business.AutomapperProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
             services.AddMvc();
+            services.AddSingleton<IConfiguration>(Configuration);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<ITestService, TestService>();
             services.AddScoped<IQuestionService, QuestionService>();
-            services.AddScoped<IAnswerService, AnswerService>();
-            services.AddDbContext<TestDbContext>(options => options.UseSqlServer(Configuration["ConnectionString"]));
-            services.AddAutoMapper(new Type[] { typeof(Business.AutomapperProfile) });
             services.AddControllers();
             services.AddControllersWithViews();
             
@@ -76,11 +81,12 @@ namespace WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, TestDbContext context)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                context.Database.EnsureCreated();
             }
             else
             {
@@ -98,7 +104,6 @@ namespace WebApi
             }
 
             app.UseRouting();
-            //app.UseCors(builder => builder.AllowAnyOrigin());
             app.UseCors("AllowOrigin");
             app.UseAuthentication();
             app.UseAuthorization();

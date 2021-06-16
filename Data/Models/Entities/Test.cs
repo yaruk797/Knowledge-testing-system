@@ -7,6 +7,7 @@ namespace Data.Entities
     public class Test : BaseEntity
     {
         public string Name { get; set; }
+        public string Description { get; set; }
         public List<Question> Questions { get; set; }
         public List<History> Users { get; set; }
     }
